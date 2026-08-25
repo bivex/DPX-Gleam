@@ -144,7 +144,7 @@ class SwallowedProcessTimeoutRule(BaseRule):
     def evaluate(self, model: CodeModel) -> list[Detection]:
         detections: list[Detection] = []
         for fn in model.all_functions:
-            if "process.receive" in fn.body and ("Error(_) -> Nil" in fn.body or "Error(_) -> nil" in fn.body):
+            if "process.receive" in fn.body and re.search(r"Error\([^)]*\)\s*->\s*(?:Nil|nil)", fn.body):
                 evidences = [
                     Evidence(
                         rule_code="HAZARD_SWALLOWED_PROCESS_TIMEOUT",

@@ -79,9 +79,9 @@ class CurryingPartialApplicationRule(BaseRule):
 
 
 class PureRecordUpdateSyntaxRule(BaseRule):
-    """Detects immutable record copy updates ('{ ..base, field: value }')."""
+    """Detects immutable record copy updates ('Type(..base, field: value)')."""
 
-    UPDATE_PATTERN = re.compile(r"\{\s*\.\.[a-zA-Z0-9_]+,\s*[a-zA-Z0-9_]+:")
+    UPDATE_PATTERN = re.compile(r"\(\s*\.\.[a-zA-Z0-9_]+,\s*[a-zA-Z0-9_]+:")
 
     def evaluate(self, model: CodeModel) -> list[Detection]:
         detections: list[Detection] = []
@@ -90,7 +90,7 @@ class PureRecordUpdateSyntaxRule(BaseRule):
                 evidences = [
                     Evidence(
                         rule_code="FUNCTIONAL_RECORD_UPDATE",
-                        description=f"Function '{fn.name}' creates immutable record copies using record update syntax ({{ ..base, field: val }})",
+                        description=f"Function '{fn.name}' creates immutable record copies using record update syntax (Type(..base, field: val))",
                         weight=0.92,
                         location=fn.location,
                     )

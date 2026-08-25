@@ -172,8 +172,10 @@ class DryDuplicateLogicRule(BaseRule):
         detections: list[Detection] = []
         body_map: dict[str, list[str]] = {}
         for fn in model.all_functions:
-            cleaned = re.sub(r"\s+", " ", fn.body).strip()
-            if len(cleaned) >= 50:
+            lines = [l.strip() for l in fn.body.splitlines() if l.strip()]
+            inner_lines = lines[1:-1] if len(lines) >= 3 else lines
+            cleaned = " ".join(inner_lines).strip()
+            if len(cleaned) >= 35:
                 body_map.setdefault(cleaned, []).append(fn.name)
 
         for body, names in body_map.items():
